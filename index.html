@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VẪN LÀ TMK HEHEHEHE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #4e54c8;
+            --bg-color: #f0f2f5;
+            --white: #ffffff;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            margin: 0; min-height: 100vh;
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        .main-wrapper { width: 100%; padding: 20px; box-sizing: border-box; display: flex; justify-content: center; }
+        .container { width: 100%; max-width: 1100px; background: var(--white); padding: 30px; border-radius: 20px; box-shadow: var(--shadow); }
+        header { text-align: center; margin-bottom: 20px; }
+        h1 { margin: 0; color: var(--primary-color); }
+        .subtitle { color: #777; margin-top: 5px; }
+        .hidden { display: none !important; }
+
+        /* Grid Menu */
+        .grid-container { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; margin-bottom: 20px; }
+        .exam-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;
+            padding: 15px; border-radius: 10px; text-align: center; cursor: pointer; border: none;
+            transition: transform 0.2s; display: flex; flex-direction: column; align-items: center; font-family: inherit;
+        }
+        .exam-card:hover { transform: translateY(-5px); }
+        .exam-card.random { background: linear-gradient(135deg, #ff9966 0%, #ff5e62 100%); }
+        .exam-card strong { display: block; font-size: 1.1em; margin-bottom: 5px; }
+        .exam-card span { font-size: 0.8em; opacity: 0.9; }
+
+        .footer-actions { text-align: center; margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px; }
+        .btn-history { background: white; border: 2px solid var(--primary-color); color: var(--primary-color); padding: 10px 25px; border-radius: 30px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn-history:hover { background: var(--primary-color); color: white; }
+
+        /* --- BỐ CỤC 2 CỘT KHI LÀM BÀI --- */
+        .quiz-wrapper { display: flex; gap: 20px; align-items: flex-start; }
+
+        /* Cột Trái: Câu hỏi */
+        .quiz-main { flex: 3; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .question-block {
+            background: #fff; border: 1px solid #eee; padding: 15px;
+            margin-bottom: 20px; border-radius: 8px;
+            scroll-margin-top: 20px;
+        }
+        .question-text { font-weight: 600; margin-bottom: 10px; color: #2c3e50; }
+        .option { display: block; background: #f8f9fa; padding: 10px; margin-bottom: 5px; border-radius: 5px; cursor: pointer; transition: 0.2s; }
+        .option:hover { background: #e9ecef; }
+        .option input { margin-right: 10px; }
+
+        /* Cột Phải: Sidebar cố định */
+        .quiz-sidebar {
+            flex: 1; position: sticky; top: 20px;
+            background: #fdfdfd; padding: 15px; border-radius: 10px;
+            border: 1px solid #eee; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            max-height: 90vh; overflow-y: auto;
+        }
+
+        .timer-box {
+            text-align: center; font-size: 1.4em; font-weight: bold; color: #e74c3c;
+            background: #fff0f0; padding: 8px; border-radius: 8px; margin-bottom: 15px;
+        }
+
+        .sidebar-label { font-weight: 600; font-size: 0.9em; margin-bottom: 10px; text-align: center; }
+
+        /* Lưới số câu hỏi */
+        .palette-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; margin-bottom: 20px; }
+        .palette-item {
+            background: #eee; border: none; padding: 6px 0; border-radius: 4px;
+            cursor: pointer; font-size: 0.85em; text-align: center; transition: 0.2s;
+        }
+        .palette-item:hover { background: #dcdcdc; }
+        .palette-item.active { background: #4e54c8; color: white; font-weight: bold; }
+
+        /* Nút Sidebar */
+        .btn-submit-sidebar { width: 100%; padding: 12px; background: #27ae60; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-bottom: 8px; }
+        .btn-exit-sidebar { width: 100%; padding: 8px; background: #95a5a6; color: white; border: none; border-radius: 6px; cursor: pointer; }
+
+        /* Kết quả & Lịch sử */
+        .result-card { text-align: center; margin-bottom: 30px; }
+        .score-circle { 
+            width: 120px; height: 120px; background: var(--primary-color); color: white; 
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; 
+            font-size: 24px; font-weight: bold; margin: 0 auto 15px; 
+        }
+        .btn-primary { background: var(--primary-color); color: white; border: none; padding: 10px 25px; border-radius: 20px; cursor: pointer; }
+        
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { padding: 10px; border: 1px solid #ddd; text-align: center; }
+        th { background: #f2f2f2; }
+        .history-actions { text-align: center; }
+        .btn-secondary { background: #7f8c8d; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-right: 10px; }
+        .btn-danger { background: #c0392b; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .grid-container { grid-template-columns: repeat(2, 1fr); }
+            .quiz-wrapper { flex-direction: column-reverse; }
+            .quiz-sidebar { position: static; width: 100%; box-sizing: border-box; }
+            .palette-grid { grid-template-columns: repeat(10, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-wrapper">
+        <div class="container">
+            <header>
+                <h1>PHÁP LUẬT ĐẠI CƯƠNG</h1>
+                <p class="subtitle">LẤY TỪ DỮ LIỆU 450 CÂU CỦA TRUNG TÂM THI BẰNG LÁI VN...</p>
+            </header>
+
+            <div id="menu-screen">
+                <div class="section-title"><b>Danh sách đề thi</b></div>
+                <div id="exam-list" class="grid-container">
+                    </div>
+                <div class="footer-actions">
+                    <button class="btn-history" onclick="showHistory()">📜 Xem Lịch Sử Làm Bài</button>
+                </div>
+            </div>
+
+            <div id="quiz-screen" class="hidden">
+                <div class="quiz-wrapper">
+                    <div class="quiz-main">
+                        <h2 id="exam-title" style="margin-top:0; border-bottom: 1px solid #eee; padding-bottom: 10px;">Đề thi số ...</h2>
+                        <div id="question-container"></div>
+                    </div>
+
+                    <div class="quiz-sidebar">
+                        <div class="timer-box">⏳ <span id="time-display">60:00</span></div>
+                        <div class="sidebar-label">Danh sách câu hỏi:</div>
+                        <div id="question-palette" class="palette-grid"></div>
+                        <div class="sidebar-actions">
+                            <button class="btn-submit-sidebar" onclick="submitQuiz()">Nộp bài ngay</button>
+                            <button class="btn-exit-sidebar" onclick="goHome()">Thoát</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="result-screen" class="hidden">
+                <div class="result-card">
+                    <h2>Kết Quả</h2>
+                    <div class="score-circle">
+                        <span id="score-text">0/50</span>
+                    </div>
+                    <p>Chi tiết đáp án bên dưới</p>
+                    <button class="btn-primary" onclick="goHome()">Về trang chủ</button>
+                </div>
+                <div id="review-container"></div>
+            </div>
+
+            <div id="history-screen" class="hidden">
+                <h2 style="text-align: center;">Lịch Sử Làm Bài</h2>
+                <table id="history-table">
+                    <thead>
+                        <tr>
+                            <th>Thời gian</th>
+                            <th>Đề thi</th>
+                            <th>Điểm</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-body"></tbody>
+                </table>
+                <div class="history-actions">
+                    <button class="btn-secondary" onclick="goHome()">Quay lại</button>
+                    <button class="btn-danger" onclick="clearHistory()">Xóa lịch sử</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+
+    <script>
+        // CẤU HÌNH
+        let timerInterval;
+        const QUESTIONS_PER_EXAM = 50;
+        const TOTAL_FIXED_EXAMS = 9; 
+        let currentExamQuestions = [];
+        let userAnswers = {};
+
+        // Đảm bảo dữ liệu đã tải
+        if (typeof questions === 'undefined') {
+            alert("Lỗi: Không tìm thấy file script.js chứa dữ liệu câu hỏi!");
+        }
+
+        // KHỞI TẠO MENU
+        window.onload = function() {
+            const examList = document.getElementById('exam-list');
+            if (!examList) return;
+
+            // Tạo 9 đề cố định
+            for (let i = 1; i <= TOTAL_FIXED_EXAMS; i++) {
+                let btn = document.createElement('button');
+                btn.className = 'exam-card';
+                // Tính toán số lượng câu hỏi thực tế có trong database để hiển thị
+                let maxQ = Math.min(i * 50, questions.length);
+                let label = (questions.length > 0) ? `Câu ${(i-1)*50 + 1} - ${maxQ}` : "Chưa có dữ liệu";
+                
+                btn.innerHTML = `<strong>Đề số ${i}</strong><span>${label}</span>`;
+                btn.onclick = () => startFixedExam(i);
+                examList.appendChild(btn);
+            }
+
+            // Tạo đề ngẫu nhiên
+            let randomBtn = document.createElement('button');
+            randomBtn.className = 'exam-card random';
+            randomBtn.innerHTML = `<strong>Đề Ngẫu Nhiên</strong><span>Trộn 50 câu</span>`;
+            randomBtn.onclick = () => startRandomExam();
+            examList.appendChild(randomBtn);
+        };
+
+        // LOGIC CHỌN ĐỀ
+        function startFixedExam(examIndex) {
+            const start = (examIndex - 1) * QUESTIONS_PER_EXAM;
+            const end = start + QUESTIONS_PER_EXAM;
+            currentExamQuestions = questions.slice(start, end);
+            
+            if (currentExamQuestions.length === 0) {
+                alert("Chưa có dữ liệu câu hỏi cho đề này. Vui lòng nhập thêm vào file script.js!");
+                return;
+            }
+            renderQuiz(`Đề thi số ${examIndex}`);
+        }
+
+        function startRandomExam() {
+            if (questions.length === 0) { alert("Chưa có dữ liệu!"); return; }
+            const shuffled = [...questions].sort(() => 0.5 - Math.random());
+            currentExamQuestions = shuffled.slice(0, QUESTIONS_PER_EXAM);
+            renderQuiz("Đề thi Ngẫu Nhiên");
+        }
+
+        // HIỂN THỊ CÂU HỎI & SIDEBAR
+        function renderQuiz(title) {
+            toggleScreen('quiz-screen');
+            document.getElementById('exam-title').innerText = title;
+            
+            const container = document.getElementById('question-container');
+            const palette = document.getElementById('question-palette');
+            container.innerHTML = '';
+            palette.innerHTML = '';
+            userAnswers = {};
+            window.scrollTo(0, 0);
+
+            currentExamQuestions.forEach((q, index) => {
+                // Render câu hỏi bên trái
+                let html = `
+                    <div class="question-block" id="q-block-${index}">
+                        <div class="question-text">Câu ${index + 1}: ${q.question}</div>
+                        <div class="options-group">
+                `;
+                q.options.forEach((opt, optIndex) => {
+                    html += `
+                        <label class="option">
+                            <input type="radio" name="q-${q.id}" value="${optIndex}" onchange="saveAnswer(${q.id}, ${optIndex}, ${index})">
+                            ${String.fromCharCode(65 + optIndex)}. ${opt}
+                        </label>`;
+                });
+                html += `</div></div>`;
+                container.innerHTML += html;
+
+                // Render nút số bên phải
+                let btn = document.createElement('div');
+                btn.className = 'palette-item';
+                btn.id = `palette-btn-${index}`;
+                btn.innerText = index + 1;
+                btn.onclick = () => scrollToQuestion(index);
+                palette.appendChild(btn);
+            });
+
+            startTimer(60 * 60); // 60 phút
+        }
+
+        // CÁC HÀM HỖ TRỢ
+        function scrollToQuestion(index) {
+            document.getElementById(`q-block-${index}`).scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function saveAnswer(qId, optIndex, uiIndex) {
+            userAnswers[qId] = optIndex;
+            document.getElementById(`palette-btn-${uiIndex}`).classList.add('active');
+        }
+
+        function startTimer(duration) {
+            let timer = duration, minutes, seconds;
+            const display = document.getElementById('time-display');
+            clearInterval(timerInterval);
+            timerInterval = setInterval(function () {
+                minutes = parseInt(timer / 60, 10);
+                seconds = parseInt(timer % 60, 10);
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+                display.textContent = minutes + ":" + seconds;
+                if (--timer < 0) {
+                    clearInterval(timerInterval);
+                    alert("Hết giờ!");
+                    submitQuiz(true);
+                }
+            }, 1000);
+        }
+
+        function submitQuiz(autoSubmit = false) {
+            if (!autoSubmit && !confirm("Bạn chắc chắn muốn nộp bài?")) return;
+            clearInterval(timerInterval);
+
+            let score = 0;
+            let reviewHtml = '';
+
+            currentExamQuestions.forEach((q, index) => {
+                const userAnswer = userAnswers[q.id];
+                const isCorrect = userAnswer === q.answer;
+                if (isCorrect) score++;
+                
+                let status = isCorrect ? '<span style="color:green;font-weight:bold">ĐÚNG</span>' : '<span style="color:red;text-decoration:line-through">SAI</span>';
+                let uText = userAnswer !== undefined ? q.options[userAnswer] : "Chưa chọn";
+                let cText = q.options[q.answer];
+
+                reviewHtml += `
+                    <div class="question-block" style="background:${isCorrect ? '#e8f5e9' : '#ffebee'}">
+                        <p><strong>Câu ${index + 1}:</strong> ${q.question} - ${status}</p>
+                        <p>Bạn chọn: ${uText}</p>
+                        ${!isCorrect ? `<p>Đáp án đúng: <b>${cText}</b></p>` : ''}
+                    </div>`;
+            });
+
+            toggleScreen('result-screen');
+            document.getElementById('score-text').innerText = `${score}/${currentExamQuestions.length}`;
+            document.getElementById('review-container').innerHTML = reviewHtml;
+            saveHistoryToLocal(document.getElementById('exam-title').innerText, score);
+            window.scrollTo(0, 0);
+        }
+
+        // CHUYỂN MÀN HÌNH
+        function toggleScreen(screenId) {
+            ['menu-screen', 'quiz-screen', 'result-screen', 'history-screen'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+            document.getElementById(screenId).classList.remove('hidden');
+        }
+
+        function goHome() {
+            clearInterval(timerInterval);
+            toggleScreen('menu-screen');
+        }
+
+        // LƯU LỊCH SỬ
+        function saveHistoryToLocal(examName, score) {
+            const history = JSON.parse(localStorage.getItem('quizHistory')) || [];
+            history.unshift({ time: new Date().toLocaleString('vi-VN'), exam: examName, score: `${score}/${currentExamQuestions.length}` });
+            localStorage.setItem('quizHistory', JSON.stringify(history));
+        }
+
+        function showHistory() {
+            toggleScreen('history-screen');
+            const h = JSON.parse(localStorage.getItem('quizHistory')) || [];
+            const tbody = document.getElementById('history-body');
+            tbody.innerHTML = h.length ? '' : '<tr><td colspan="3">Chưa có dữ liệu</td></tr>';
+            h.forEach(i => tbody.innerHTML += `<tr><td>${i.time}</td><td>${i.exam}</td><td>${i.score}</td></tr>`);
+        }
+
+        function clearHistory() {
+            if(confirm("Xóa lịch sử?")) { localStorage.removeItem('quizHistory'); showHistory(); }
+        }
+    </script>
+</body>
+</html>
