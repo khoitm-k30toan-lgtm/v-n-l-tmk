@@ -124,12 +124,12 @@ const questions = [
         id: 12,
         question: "Việt Nam hiện nay có bao nhiêu tỉnh, thành phố trực thuộc trung ương:",
         options: [
-            "61",
-            "62",
+            "33",
+            "34",
             "63",
-            "64"
+            "36"
         ],
-        answer: 2 // Đáp án đúng [cite: 192]
+        answer: 1 // Đáp án đúng [cite: 192]
     },
     {
         id: 13,
@@ -4947,6 +4947,7 @@ const questions = [
         answer: 2 // C
     }
 ]; // KẾT THÚC MẢNG DATABASE
+
 
 
 
