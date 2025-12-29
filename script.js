@@ -871,7 +871,7 @@ const questions = [
     },
     {
         id: 80,
-        question: "Điều 33 Hiến pháp năm 2013... Quy định này thể hiện thuộc tính nào của pháp luật:",
+        question: "Điều 33 Hiến pháp năm 2013 nêu rõ: “Mọi người có quyền tự do kinh doanh trong những ngành nghề mà pháp luật không cấm”. Quy định này thể hiện thuộc tính nào của pháp luật:",
         options: [
             "Tính quy phạm phổ biến.",
             "Tính xác định chặt chẽ về mặt hình thức.",
@@ -4947,4 +4947,5 @@ const questions = [
         answer: 2 // C
     }
 ]; // KẾT THÚC MẢNG DATABASE
+
 
