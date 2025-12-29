@@ -1058,14 +1058,14 @@ const questions = [
     },
     {
         id: 97,
-        question: "Một cá nhân được xem là có đầy đủ năng lực hành vi lao động khi chủ thể đủ bao nhiêu tuổi:",
+        question: "Sự kiện pháp lý làm phát sinh quan hệ pháp luật:",
         options: [
-            "Đủ 15 tuổi.",
-            "Đủ 18 tuổi.",
-            "Đủ 21 tuổi.",
-            "Đủ 13 tuổi."
+            "A dùng dao giết B chết.",
+            "A bị điều chuyển công việc từ nhân viên điều dưỡng sang làm hộ lý bệnh viện.",
+            "A và B ly hôn.",
+            "Tất cả các trường hợp trên."
         ],
-        answer: 0 // A
+        answer: 3 // D
     },
     {
         id: 98,
@@ -4947,5 +4947,6 @@ const questions = [
         answer: 2 // C
     }
 ]; // KẾT THÚC MẢNG DATABASE
+
 
 
