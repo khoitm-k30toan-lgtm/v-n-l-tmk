@@ -39,6 +39,9 @@
         }
         .exam-card:hover { transform: translateY(-5px); }
         .exam-card.random { background: linear-gradient(135deg, #ff9966 0%, #ff5e62 100%); }
+        /* Style riêng cho nút Tùy chỉnh */
+        .exam-card.custom { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
+        
         .exam-card strong { display: block; font-size: 1.1em; margin-bottom: 5px; }
         .exam-card span { font-size: 0.8em; opacity: 0.9; }
 
@@ -140,7 +143,7 @@
                     </div>
 
                     <div class="quiz-sidebar">
-                        <div class="timer-box">⏳ <span id="time-display">60:00</span></div>
+                        <div class="timer-box" id="timer-box">⏳ <span id="time-display">60:00</span></div>
                         <div class="sidebar-label">Danh sách câu hỏi:</div>
                         <div id="question-palette" class="palette-grid"></div>
                         <div class="sidebar-actions">
@@ -207,7 +210,6 @@
             for (let i = 1; i <= TOTAL_FIXED_EXAMS; i++) {
                 let btn = document.createElement('button');
                 btn.className = 'exam-card';
-                // Tính toán số lượng câu hỏi thực tế có trong database để hiển thị
                 let maxQ = Math.min(i * 50, questions.length);
                 let label = (questions.length > 0) ? `Câu ${(i-1)*50 + 1} - ${maxQ}` : "Chưa có dữ liệu";
                 
@@ -216,12 +218,19 @@
                 examList.appendChild(btn);
             }
 
-            // Tạo đề ngẫu nhiên
+            // Tạo đề ngẫu nhiên (Số 10)
             let randomBtn = document.createElement('button');
             randomBtn.className = 'exam-card random';
             randomBtn.innerHTML = `<strong>Đề Ngẫu Nhiên</strong><span>Trộn 50 câu</span>`;
             randomBtn.onclick = () => startRandomExam();
             examList.appendChild(randomBtn);
+
+            // Tạo đề tùy chỉnh (Số 11 - MỚI)
+            let customBtn = document.createElement('button');
+            customBtn.className = 'exam-card custom'; // Class custom để có màu khác
+            customBtn.innerHTML = `<strong>Đề Tùy Chỉnh</strong><span>Chọn số lượng câu</span>`;
+            customBtn.onclick = () => startCustomExam();
+            examList.appendChild(customBtn);
         };
 
         // LOGIC CHỌN ĐỀ
@@ -234,27 +243,63 @@
                 alert("Chưa có dữ liệu câu hỏi cho đề này. Vui lòng nhập thêm vào file script.js!");
                 return;
             }
-            renderQuiz(`Đề thi số ${examIndex}`);
+            renderQuiz(`Đề thi số ${examIndex}`, true); // true = có tính giờ
         }
 
         function startRandomExam() {
             if (questions.length === 0) { alert("Chưa có dữ liệu!"); return; }
             const shuffled = [...questions].sort(() => 0.5 - Math.random());
             currentExamQuestions = shuffled.slice(0, QUESTIONS_PER_EXAM);
-            renderQuiz("Đề thi Ngẫu Nhiên");
+            renderQuiz("Đề thi Ngẫu Nhiên", true); // true = có tính giờ
+        }
+
+        // HÀM MỚI: BẮT ĐẦU ĐỀ TÙY CHỈNH
+        function startCustomExam() {
+            if (questions.length === 0) { alert("Chưa có dữ liệu!"); return; }
+            
+            // Hỏi người dùng số lượng câu hỏi
+            let input = prompt(`Nhập số lượng câu hỏi bạn muốn ôn tập (Tối đa ${questions.length} câu):`);
+            
+            // Nếu người dùng ấn Hủy hoặc không nhập gì
+            if (input === null) return; 
+            
+            let count = parseInt(input);
+            if (isNaN(count) || count <= 0 || count > questions.length) {
+                alert(`Vui lòng nhập một con số hợp lệ từ 1 đến ${questions.length}!`);
+                return;
+            }
+
+            // Trộn và lấy số lượng câu hỏi theo yêu cầu
+            const shuffled = [...questions].sort(() => 0.5 - Math.random());
+            currentExamQuestions = shuffled.slice(0, count);
+            
+            // Gọi hàm render với tham số false (không tính giờ)
+            renderQuiz(`Đề Tùy Chỉnh (${count} câu)`, false);
         }
 
         // HIỂN THỊ CÂU HỎI & SIDEBAR
-        function renderQuiz(title) {
+        // Thêm tham số useTimer để quyết định có hiện đồng hồ hay không
+        function renderQuiz(title, useTimer = true) {
             toggleScreen('quiz-screen');
             document.getElementById('exam-title').innerText = title;
             
             const container = document.getElementById('question-container');
             const palette = document.getElementById('question-palette');
+            const timerBox = document.getElementById('timer-box'); // Lấy hộp đồng hồ
+
             container.innerHTML = '';
             palette.innerHTML = '';
             userAnswers = {};
             window.scrollTo(0, 0);
+
+            // Xử lý hiển thị đồng hồ
+            clearInterval(timerInterval); // Reset đồng hồ cũ
+            if (useTimer) {
+                timerBox.classList.remove('hidden');
+                startTimer(60 * 60); // 60 phút
+            } else {
+                timerBox.classList.add('hidden'); // Ẩn đồng hồ
+            }
 
             currentExamQuestions.forEach((q, index) => {
                 // Render câu hỏi bên trái
@@ -281,8 +326,6 @@
                 btn.onclick = () => scrollToQuestion(index);
                 palette.appendChild(btn);
             });
-
-            startTimer(60 * 60); // 60 phút
         }
 
         // CÁC HÀM HỖ TRỢ
