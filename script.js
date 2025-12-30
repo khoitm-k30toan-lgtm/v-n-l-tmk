@@ -1367,7 +1367,7 @@ const questions = [
     },
     {
         id: 125,
-        question: "Điều 116 BLDS năm 2015 quy định: “Giao dịch dân sự là hợp đồng hoặc hành vi pháp lý đơn phương...”. Quy phạm pháp luật này gồm có:",
+        question: "Điều 116 BLDS năm 2015 quy định: “Giao dịch dân sự là hợp đồng hoặc hành vi pháp lý đơn phương làm phát sinh, thay đổi hoặc chấm dứt quyền, nghĩa vụ dân sự.”. Quy phạm pháp luật này gồm có:",
         options: [
             "Giả định và chế tài",
             "Giả định và quy định",
@@ -1378,7 +1378,7 @@ const questions = [
     },
     {
         id: 126,
-        question: "Khoản 1, Điều 125 của BLHS năm 2015: “Người nào giết người trong trạng thái tinh thần bị kích động mạnh... thì bị phạt tù...”. Quy phạm này gồm:",
+        question: "Khoản 1, Điều 125 của BLHS năm 2015: “Người nào giết người trong trạng thái tinh thần bị kích động mạnh do hành vi trái pháp luật nghiêm trọng của nạn nhân đối với người đó hoặc đối với người thân thích của người đó, thì bị phạt tù từ 06 tháng đến 03 năm.”. Quy phạm này gồm:",
         options: [
             "Giả định và chế tài",
             "Giả định, quy định và chế tài",
@@ -4947,6 +4947,7 @@ const questions = [
         answer: 2 // C
     }
 ]; // KẾT THÚC MẢNG DATABASE
+
 
 
 
