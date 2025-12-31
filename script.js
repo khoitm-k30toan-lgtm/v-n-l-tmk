@@ -1698,7 +1698,7 @@ const questions = [
     },
     {
         id: 156,
-        question: "Xác định động cơ của vi phạm pháp luật: A ghen tuông với B... A gửi trà sữa có độc... khiến đồng nghiệp của B tử vong.",
+        question: "Xác định động cơ của vi phạm pháp luật: A ghen tuông với B - vợ của nhân tình, A gửi 6 ly trà sữa có pha chất độc xyanua và gửi tới phòng làm việc của B, khiến 1 đồng nghiệp của B tử vong do uống nhầm ly trà sữa có độc tố.",
         options: [
             "Giải quyết mâu thuẫn tình cảm.",
             "Tước đoạt tính mạng của B.",
@@ -4947,6 +4947,7 @@ const questions = [
         answer: 2 // C
     }
 ]; // KẾT THÚC MẢNG DATABASE
+
 
 
 
