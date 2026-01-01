@@ -39,7 +39,6 @@
         }
         .exam-card:hover { transform: translateY(-5px); }
         .exam-card.random { background: linear-gradient(135deg, #ff9966 0%, #ff5e62 100%); }
-        /* Style riêng cho nút Tùy chỉnh */
         .exam-card.custom { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
         
         .exam-card strong { display: block; font-size: 1.1em; margin-bottom: 5px; }
@@ -58,7 +57,15 @@
             background: #fff; border: 1px solid #eee; padding: 15px;
             margin-bottom: 20px; border-radius: 8px;
             scroll-margin-top: 20px;
+            transition: border 0.3s box-shadow 0.3s;
         }
+        
+        /* CSS MỚI: Hiệu ứng khi đang chọn câu hỏi bằng bàn phím */
+        .question-block.focused {
+            border: 2px solid var(--primary-color);
+            box-shadow: 0 0 10px rgba(78, 84, 200, 0.2);
+        }
+
         .question-text { font-weight: 600; margin-bottom: 10px; color: #2c3e50; }
         .option { display: block; background: #f8f9fa; padding: 10px; margin-bottom: 5px; border-radius: 5px; cursor: pointer; transition: 0.2s; }
         .option:hover { background: #e9ecef; }
@@ -87,6 +94,7 @@
         }
         .palette-item:hover { background: #dcdcdc; }
         .palette-item.active { background: #4e54c8; color: white; font-weight: bold; }
+        .palette-item.current-view { border: 2px solid #e74c3c; box-sizing: border-box; } /* Mới: viền đỏ cho câu đang xem */
 
         /* Nút Sidebar */
         .btn-submit-sidebar { width: 100%; padding: 12px; background: #27ae60; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-bottom: 8px; }
@@ -146,6 +154,9 @@
                         <div class="timer-box" id="timer-box">⏳ <span id="time-display">60:00</span></div>
                         <div class="sidebar-label">Danh sách câu hỏi:</div>
                         <div id="question-palette" class="palette-grid"></div>
+                        <div style="font-size: 0.8em; color: #666; text-align: center; margin: 5px 0; font-style: italic;">
+                            Tip: Dùng phím mũi tên ⬅️ ➡️ để chuyển câu, ⬆️ ⬇️ để chọn đáp án.
+                        </div>
                         <div class="sidebar-actions">
                             <button class="btn-submit-sidebar" onclick="submitQuiz()">Nộp bài ngay</button>
                             <button class="btn-exit-sidebar" onclick="goHome()">Thoát</button>
@@ -195,6 +206,9 @@
         const TOTAL_FIXED_EXAMS = 9; 
         let currentExamQuestions = [];
         let userAnswers = {};
+        
+        // BIẾN MỚI: Theo dõi câu hỏi hiện tại đang focus
+        let currentQuestionIndex = 0; 
 
         // Đảm bảo dữ liệu đã tải
         if (typeof questions === 'undefined') {
@@ -218,93 +232,140 @@
                 examList.appendChild(btn);
             }
 
-            // Tạo đề ngẫu nhiên (Số 10)
+            // Tạo đề ngẫu nhiên
             let randomBtn = document.createElement('button');
             randomBtn.className = 'exam-card random';
             randomBtn.innerHTML = `<strong>Đề Ngẫu Nhiên</strong><span>Trộn 50 câu</span>`;
             randomBtn.onclick = () => startRandomExam();
             examList.appendChild(randomBtn);
 
-            // Tạo đề tùy chỉnh (Số 11 - MỚI)
+            // Tạo đề tùy chỉnh
             let customBtn = document.createElement('button');
-            customBtn.className = 'exam-card custom'; // Class custom để có màu khác
+            customBtn.className = 'exam-card custom';
             customBtn.innerHTML = `<strong>Đề Tùy Chỉnh</strong><span>Chọn số lượng câu</span>`;
             customBtn.onclick = () => startCustomExam();
             examList.appendChild(customBtn);
+
+            // ĐĂNG KÝ SỰ KIỆN BÀN PHÍM
+            document.addEventListener('keydown', handleKeyboardInput);
         };
 
-        // LOGIC CHỌN ĐỀ
+        // --- XỬ LÝ BÀN PHÍM (TÍNH NĂNG MỚI) ---
+        function handleKeyboardInput(e) {
+            // Chỉ hoạt động khi đang ở màn hình làm bài
+            if (document.getElementById('quiz-screen').classList.contains('hidden')) return;
+            
+            // Ngăn chặn hành vi cuộn mặc định của trình duyệt để tránh giật
+            if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].indexOf(e.code) > -1) {
+                e.preventDefault();
+            }
+
+            if (e.code === 'ArrowRight') {
+                // Sang câu tiếp theo
+                if (currentQuestionIndex < currentExamQuestions.length - 1) {
+                    scrollToQuestion(currentQuestionIndex + 1);
+                }
+            } else if (e.code === 'ArrowLeft') {
+                // Về câu trước
+                if (currentQuestionIndex > 0) {
+                    scrollToQuestion(currentQuestionIndex - 1);
+                }
+            } else if (e.code === 'ArrowDown' || e.code === 'ArrowUp') {
+                // Chọn đáp án
+                handleAnswerSelectionByKey(e.code);
+            }
+        }
+
+        function handleAnswerSelectionByKey(keyCode) {
+            const q = currentExamQuestions[currentQuestionIndex];
+            const qId = q.id;
+            const optionsCount = q.options.length;
+            
+            // Lấy đáp án hiện tại (nếu chưa chọn thì coi như undefined)
+            let currentSelection = userAnswers[qId];
+            let newSelection;
+
+            if (currentSelection === undefined) {
+                // Nếu chưa chọn gì: Xuống -> Chọn A (0), Lên -> Chọn đáp án cuối
+                newSelection = (keyCode === 'ArrowDown') ? 0 : optionsCount - 1;
+            } else {
+                if (keyCode === 'ArrowDown') {
+                    newSelection = currentSelection + 1;
+                    if (newSelection >= optionsCount) newSelection = 0; // Vòng lại A
+                } else {
+                    newSelection = currentSelection - 1;
+                    if (newSelection < 0) newSelection = optionsCount - 1; // Vòng lại cuối
+                }
+            }
+
+            // Lưu đáp án
+            saveAnswer(qId, newSelection, currentQuestionIndex);
+            
+            // Cập nhật UI (check vào nút radio)
+            const radio = document.querySelector(`input[name="q-${qId}"][value="${newSelection}"]`);
+            if (radio) radio.checked = true;
+        }
+        // ----------------------------------------
+
         function startFixedExam(examIndex) {
             const start = (examIndex - 1) * QUESTIONS_PER_EXAM;
             const end = start + QUESTIONS_PER_EXAM;
             currentExamQuestions = questions.slice(start, end);
             
             if (currentExamQuestions.length === 0) {
-                alert("Chưa có dữ liệu câu hỏi cho đề này. Vui lòng nhập thêm vào file script.js!");
+                alert("Chưa có dữ liệu câu hỏi cho đề này!");
                 return;
             }
-            renderQuiz(`Đề thi số ${examIndex}`, true); // true = có tính giờ
+            renderQuiz(`Đề thi số ${examIndex}`, true);
         }
 
         function startRandomExam() {
             if (questions.length === 0) { alert("Chưa có dữ liệu!"); return; }
             const shuffled = [...questions].sort(() => 0.5 - Math.random());
             currentExamQuestions = shuffled.slice(0, QUESTIONS_PER_EXAM);
-            renderQuiz("Đề thi Ngẫu Nhiên", true); // true = có tính giờ
+            renderQuiz("Đề thi Ngẫu Nhiên", true);
         }
 
-        // HÀM MỚI: BẮT ĐẦU ĐỀ TÙY CHỈNH
         function startCustomExam() {
             if (questions.length === 0) { alert("Chưa có dữ liệu!"); return; }
-            
-            // Hỏi người dùng số lượng câu hỏi
-            let input = prompt(`Nhập số lượng câu hỏi bạn muốn ôn tập (Tối đa ${questions.length} câu):`);
-            
-            // Nếu người dùng ấn Hủy hoặc không nhập gì
+            let input = prompt(`Nhập số lượng câu hỏi (Tối đa ${questions.length} câu):`);
             if (input === null) return; 
             
             let count = parseInt(input);
             if (isNaN(count) || count <= 0 || count > questions.length) {
-                alert(`Vui lòng nhập một con số hợp lệ từ 1 đến ${questions.length}!`);
+                alert(`Vui lòng nhập số hợp lệ từ 1 đến ${questions.length}!`);
                 return;
             }
-
-            // Trộn và lấy số lượng câu hỏi theo yêu cầu
             const shuffled = [...questions].sort(() => 0.5 - Math.random());
             currentExamQuestions = shuffled.slice(0, count);
-            
-            // Gọi hàm render với tham số false (không tính giờ)
             renderQuiz(`Đề Tùy Chỉnh (${count} câu)`, false);
         }
 
-        // HIỂN THỊ CÂU HỎI & SIDEBAR
-        // Thêm tham số useTimer để quyết định có hiện đồng hồ hay không
         function renderQuiz(title, useTimer = true) {
             toggleScreen('quiz-screen');
             document.getElementById('exam-title').innerText = title;
             
             const container = document.getElementById('question-container');
             const palette = document.getElementById('question-palette');
-            const timerBox = document.getElementById('timer-box'); // Lấy hộp đồng hồ
+            const timerBox = document.getElementById('timer-box');
 
             container.innerHTML = '';
             palette.innerHTML = '';
             userAnswers = {};
+            currentQuestionIndex = 0; // Reset về câu đầu tiên
             window.scrollTo(0, 0);
 
-            // Xử lý hiển thị đồng hồ
-            clearInterval(timerInterval); // Reset đồng hồ cũ
+            clearInterval(timerInterval);
             if (useTimer) {
                 timerBox.classList.remove('hidden');
-                startTimer(60 * 60); // 60 phút
+                startTimer(60 * 60); 
             } else {
-                timerBox.classList.add('hidden'); // Ẩn đồng hồ
+                timerBox.classList.add('hidden');
             }
 
             currentExamQuestions.forEach((q, index) => {
-                // Render câu hỏi bên trái
                 let html = `
-                    <div class="question-block" id="q-block-${index}">
+                    <div class="question-block" id="q-block-${index}" onclick="setCurrentQuestionManually(${index})">
                         <div class="question-text">Câu ${index + 1}: ${q.question}</div>
                         <div class="options-group">
                 `;
@@ -318,7 +379,6 @@
                 html += `</div></div>`;
                 container.innerHTML += html;
 
-                // Render nút số bên phải
                 let btn = document.createElement('div');
                 btn.className = 'palette-item';
                 btn.id = `palette-btn-${index}`;
@@ -326,16 +386,48 @@
                 btn.onclick = () => scrollToQuestion(index);
                 palette.appendChild(btn);
             });
+
+            // Focus vào câu đầu tiên ngay lập tức
+            highlightCurrentQuestion(0);
         }
 
-        // CÁC HÀM HỖ TRỢ
         function scrollToQuestion(index) {
-            document.getElementById(`q-block-${index}`).scrollIntoView({ behavior: 'smooth', block: 'center' });
+            currentQuestionIndex = index; // Cập nhật chỉ số câu hỏi hiện tại
+            const block = document.getElementById(`q-block-${index}`);
+            block.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            // Cập nhật giao diện Focus
+            highlightCurrentQuestion(index);
+        }
+
+        // Hàm click thủ công vào câu hỏi để set focus
+        function setCurrentQuestionManually(index) {
+            currentQuestionIndex = index;
+            highlightCurrentQuestion(index);
+        }
+
+        function highlightCurrentQuestion(index) {
+            // Xóa class focused ở tất cả các câu
+            document.querySelectorAll('.question-block').forEach(el => el.classList.remove('focused'));
+            // Thêm vào câu hiện tại
+            const block = document.getElementById(`q-block-${index}`);
+            if (block) block.classList.add('focused');
+
+            // Cập nhật sidebar (viền đỏ câu đang xem)
+            document.querySelectorAll('.palette-item').forEach(el => el.classList.remove('current-view'));
+            const pBtn = document.getElementById(`palette-btn-${index}`);
+            if (pBtn) pBtn.classList.add('current-view');
         }
 
         function saveAnswer(qId, optIndex, uiIndex) {
             userAnswers[qId] = optIndex;
             document.getElementById(`palette-btn-${uiIndex}`).classList.add('active');
+            
+            // Nếu click chuột chọn đáp án, cũng nên set focus vào câu đó
+            if (uiIndex !== currentQuestionIndex) {
+                currentQuestionIndex = uiIndex;
+                highlightCurrentQuestion(uiIndex);
+            }
         }
 
         function startTimer(duration) {
@@ -387,7 +479,6 @@
             window.scrollTo(0, 0);
         }
 
-        // CHUYỂN MÀN HÌNH
         function toggleScreen(screenId) {
             ['menu-screen', 'quiz-screen', 'result-screen', 'history-screen'].forEach(id => {
                 document.getElementById(id).classList.add('hidden');
@@ -400,7 +491,6 @@
             toggleScreen('menu-screen');
         }
 
-        // LƯU LỊCH SỬ
         function saveHistoryToLocal(examName, score) {
             const history = JSON.parse(localStorage.getItem('quizHistory')) || [];
             history.unshift({ time: new Date().toLocaleString('vi-VN'), exam: examName, score: `${score}/${currentExamQuestions.length}` });
