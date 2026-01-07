@@ -801,7 +801,7 @@ const questions = [
             "Nghị quyết.",
             "Thông tư."
         ],
-        answer: 1 // B (Lưu ý: Theo file đáp án là Nghị định, thực tế thường là Quyết định)
+        answer: 0 // B (Lưu ý: Theo file đáp án là Nghị định, thực tế thường là Quyết định)
     },
     {
         id: 74,
@@ -4947,6 +4947,7 @@ const questions = [
         answer: 2 // C
     }
 ]; // KẾT THÚC MẢNG DATABASE
+
 
 
 
