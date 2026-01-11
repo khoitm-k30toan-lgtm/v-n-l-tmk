@@ -1903,7 +1903,7 @@ const questions = [
             "Say rượu dẫn tới không có khả năng nhận thức.",
             "Giết người do vượt quá giới hạn phòng vệ chính đáng"
         ],
-        answer: 3 // D (Lưu ý: Theo đáp án file là D, nhưng thực tế vượt quá giới hạn vẫn chịu TNHS, có thể được giảm nhẹ. Tuy nhiên hãy theo đáp án trong file)
+        answer: 1 // D (Lưu ý: Theo đáp án file là D, nhưng thực tế vượt quá giới hạn vẫn chịu TNHS, có thể được giảm nhẹ. Tuy nhiên hãy theo đáp án trong file)
     },
     {
         id: 175,
@@ -4947,6 +4947,7 @@ const questions = [
         answer: 2 // C
     }
 ]; // KẾT THÚC MẢNG DATABASE
+
 
 
 
