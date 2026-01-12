@@ -713,7 +713,7 @@ const questions = [
             "Pháp luật thể hiện ý chí của giai cấp thống trị.",
             "Pháp luật thể hiện ý chí của Nhà nước."
         ],
-        answer: 0 // A (Theo đáp án trong file)
+        answer: 0 // A 
     },
     {
         id: 66,
@@ -834,7 +834,7 @@ const questions = [
             "Chế định pháp luật.",
             "Hệ thống pháp luật."
         ],
-        answer: 1 // B (Theo file đáp án là Ngành luật. Lưu ý: Tổng hợp các QPPL điều chỉnh 1 lĩnh vực là Ngành luật, nhiều lĩnh vực là Hệ thống PL, đáp án B có thể hiểu theo ý file)
+        answer: 3 // D
     },
     {
         id: 77,
@@ -3082,7 +3082,7 @@ const questions = [
             "Anh Kong Long Xeng vừa trốn khỏi khu cách ly theo quy định của pháp luật.",
             "Chị Luyến mang thai 8 tháng."
         ],
-        answer: 0 // A (Theo file đáp án chọn A, có thể do quy định riêng hoặc lỗi file, thông thường là C nếu vi phạm, nhưng ta tuân thủ file)
+        answer: C // A (Theo file đáp án chọn A, có thể do quy định riêng hoặc lỗi file, thông thường là C nếu vi phạm, nhưng ta tuân thủ file)
     },
     {
         id: 282,
@@ -3611,7 +3611,7 @@ const questions = [
             "Công ty A tuyển dụng người lao động làm việc theo hợp đồng lao động.",
             "Công ty A điều chuyển người lao động làm công việc khác so với hợp đồng."
         ],
-        answer: 1 // B (Theo đáp án trong file)
+        answer: 2 // C 
     },
     {
         id: 330,
@@ -3831,7 +3831,7 @@ const questions = [
             "Xem xét thụ lý, chuẩn bị xét xử và mở phiên tòa theo thủ tục.",
             "Yêu cầu vợ chồng hòa giải một lần nửa trước khi nộp đơn."
         ],
-        answer: 2 // C (Theo đáp án file)
+        answer: 1 // B
     },
     {
         id: 350,
@@ -4281,9 +4281,9 @@ const questions = [
             "10 năm.",
             "15 năm.",
             "20 năm.",
-            "25 năm." // Lưu ý: Theo file đáp án là 25 năm (D), dù luật hiện hành quy định 20 năm.
+            "25 năm." 
         ],
-        answer: 3 // D
+        answer: 2 // D
     },
     {
         id: 391,
@@ -4391,9 +4391,9 @@ const questions = [
             "Cải tạo không giam giữ chính là án phạt tù treo.",
             "Cải tạo không giam giữ chính là hình phạt cảnh cáo.",
             "Cải tạo không giam giữ chính là án treo...",
-            "Không có hình phạt cải tạo không giam giữ." // (Lưu ý: Theo đáp án file chọn D)
+            "Cải tạo không giam giữ không phải là án treo." 
         ],
-        answer: 3 // D
+        answer: 3// D
     },
     // --- PHẦN 9: TỪ CÂU 401 ĐẾN 450 (HẾT) ---
     {
@@ -4801,7 +4801,7 @@ const questions = [
             "A có thể phải chịu trách nhiệm hình sự.",
             "A chỉ bị áp dụng biện pháp chữa bệnh bắt buộc."
         ],
-        answer: 1 // B (Theo đáp án trong file)
+        answer: 0 // A
     },
     {
         id: 438,
@@ -4922,7 +4922,7 @@ const questions = [
             "Luật thương mại.",
             "Vi phạm Luật hình sự, Luật phòng chống tham nhũng."
         ],
-        answer: 1 // B (Theo đáp án trong file chọn B)
+        answer: 3// D
     },
     {
         id: 449,
@@ -4947,6 +4947,7 @@ const questions = [
         answer: 2 // C
     }
 ]; // KẾT THÚC MẢNG DATABASE
+
 
 
 
