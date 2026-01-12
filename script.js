@@ -3804,7 +3804,7 @@ const questions = [
         id: 347,
         question: "Cơ quan nào có thẩm quyền giải quyết việc ly hôn?",
         options: [
-            "Tòa án nhân dân.",
+            "Viện kiểm sát nhân dân.",
             "Trưởng thôn, trưởng khối.",
             "UBND cấp xã.",
             "Toà án nhân dân."
