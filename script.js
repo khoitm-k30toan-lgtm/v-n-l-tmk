@@ -3082,7 +3082,7 @@ const questions = [
             "Anh Kong Long Xeng vừa trốn khỏi khu cách ly theo quy định của pháp luật.",
             "Chị Luyến mang thai 8 tháng."
         ],
-        answer: C // A (Theo file đáp án chọn A, có thể do quy định riêng hoặc lỗi file, thông thường là C nếu vi phạm, nhưng ta tuân thủ file)
+        answer: 2 // C 
     },
     {
         id: 282,
@@ -4947,6 +4947,7 @@ const questions = [
         answer: 2 // C
     }
 ]; // KẾT THÚC MẢNG DATABASE
+
 
 
 
